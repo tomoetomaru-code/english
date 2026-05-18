@@ -1,0 +1,89 @@
+/* ===== StageCard ===== */
+.stage-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 280px;
+  padding: 28px 20px 24px;
+  background: var(--color-white);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: transform var(--transition-bounce), box-shadow var(--transition-normal);
+  animation: fade-in-up 0.4s ease both;
+  overflow: hidden;
+}
+
+/* カラーアクセントバー（上部） */
+.stage-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: var(--stage-color);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.stage-card:hover:not(:disabled) {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 40px var(--color-shadow);
+}
+
+.stage-card:active:not(:disabled) {
+  transform: translateY(-2px) scale(0.99);
+}
+
+/* ---- Badge ---- */
+.stage-card__badge {
+  background: var(--stage-color);
+  color: var(--color-white);
+  font-family: var(--font-en);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  margin-top: 4px;
+}
+
+/* ---- Emoji ---- */
+.stage-card__emoji {
+  font-size: 3.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
+}
+
+/* ---- Text ---- */
+.stage-card__title {
+  font-family: var(--font-en);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.stage-card__subtitle {
+  font-family: var(--font-ja);
+  font-size: 0.82rem;
+  color: var(--color-text-light);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ---- Locked ---- */
+.stage-card--locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}
+
+.stage-card__lock {
+  font-size: 1.5rem;
+  margin-top: 4px;
+}

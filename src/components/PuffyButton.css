@@ -1,0 +1,105 @@
+/* ===== PuffyButton ===== */
+.puffy-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-family: var(--font-en);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Inner label (allows translateY without affecting shadow) */
+.puffy-btn__inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: transform var(--transition-fast);
+}
+
+/* ---- Size ---- */
+.puffy-btn--sm {
+  padding: 8px 20px;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 0 rgba(80, 100, 160, 0.28);
+}
+.puffy-btn--md {
+  padding: 14px 32px;
+  font-size: 1rem;
+  box-shadow: 0 6px 0 rgba(80, 100, 160, 0.28);
+}
+.puffy-btn--lg {
+  padding: 18px 44px;
+  font-size: 1.15rem;
+  box-shadow: 0 8px 0 rgba(80, 100, 160, 0.28);
+}
+.puffy-btn--full { width: 100%; }
+
+/* ---- Press animation ---- */
+.puffy-btn:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 rgba(80, 100, 160, 0.28) !important;
+}
+.puffy-btn:active:not(:disabled) .puffy-btn__inner {
+  transform: translateY(0);
+}
+
+/* ---- Disabled ---- */
+.puffy-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---- Variants ---- */
+/* primary: ミルキーブルー系 */
+.puffy-btn--primary {
+  background: linear-gradient(160deg, #74BFFF 0%, #4EADFF 100%);
+  color: var(--color-white);
+  box-shadow: 0 6px 0 #2E85CC;
+}
+.puffy-btn--primary:hover:not(:disabled) {
+  background: linear-gradient(160deg, #89CBFF 0%, #60BAFF 100%);
+}
+.puffy-btn--primary:active:not(:disabled) { box-shadow: 0 2px 0 #2E85CC !important; }
+
+/* coral: コーラルピンク */
+.puffy-btn--coral {
+  background: linear-gradient(160deg, #FF9F97 0%, #FF7A6E 100%);
+  color: var(--color-white);
+  box-shadow: 0 6px 0 #D44C40;
+}
+.puffy-btn--coral:hover:not(:disabled) {
+  background: linear-gradient(160deg, #FFB0A9 0%, #FF8C81 100%);
+}
+.puffy-btn--coral:active:not(:disabled) { box-shadow: 0 2px 0 #D44C40 !important; }
+
+/* honey: ハニーイエロー */
+.puffy-btn--honey {
+  background: linear-gradient(160deg, #FFE066 0%, #FFD23F 100%);
+  color: var(--color-text);
+  box-shadow: 0 6px 0 #C9A000;
+}
+.puffy-btn--honey:hover:not(:disabled) {
+  background: linear-gradient(160deg, #FFE87A 0%, #FFDA55 100%);
+}
+.puffy-btn--honey:active:not(:disabled) { box-shadow: 0 2px 0 #C9A000 !important; }
+
+/* ghost: 白枠 */
+.puffy-btn--ghost {
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--color-text);
+  border: 2px solid rgba(100, 150, 220, 0.3);
+  box-shadow: 0 4px 0 rgba(100, 150, 220, 0.2);
+  backdrop-filter: blur(4px);
+}
+.puffy-btn--ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.9);
+}
+.puffy-btn--ghost:active:not(:disabled) { box-shadow: 0 1px 0 rgba(100, 150, 220, 0.2) !important; }

@@ -1,0 +1,102 @@
+/* ===== Character ===== */
+.character {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---- Body ---- */
+.character__body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ---- Size ---- */
+.character--sm .character__emoji { font-size: 3rem; }
+.character--md .character__emoji { font-size: 5rem; }
+.character--lg .character__emoji { font-size: 7rem; }
+
+.character--sm .character__face { font-size: 0.65rem; }
+.character--md .character__face { font-size: 0.8rem; }
+.character--lg .character__face { font-size: 1rem; }
+
+/* ---- Accent (ear / tail) ---- */
+.character__accent {
+  position: absolute;
+  right: -10px;
+  bottom: 10px;
+  font-size: 1.2em;
+}
+
+/* ラビの耳ピコピコ */
+.character--rabi .character__ear {
+  top: -5px;
+  right: -8px;
+  bottom: auto;
+  transform-origin: bottom center;
+  animation: ear-wiggle 1.2s ease-in-out infinite;
+}
+
+/* しばの尻尾ブンブン */
+.character--shiba .character__tail {
+  bottom: 5px;
+  right: -14px;
+  transform-origin: left center;
+  animation: tail-wag 0.6s ease-in-out infinite;
+}
+
+/* ---- Mood variations ---- */
+.character--happy .character__body,
+.character--cheer .character__body {
+  animation: float 1.5s ease-in-out infinite;
+}
+
+/* ---- Face ---- */
+.character__face {
+  color: var(--color-text);
+  margin-top: -4px;
+  font-family: var(--font-ja);
+  opacity: 0.85;
+}
+
+/* ---- Bubble ---- */
+.character__bubble {
+  position: relative;
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  max-width: 220px;
+  box-shadow: var(--shadow-card);
+  animation: fade-in-up 0.3s ease both;
+}
+
+/* 吹き出し矢印 */
+.character__bubble::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 8px 10px;
+  border-style: solid;
+  border-color: transparent transparent var(--color-white) transparent;
+}
+
+.character__bubble-name {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--color-text-light);
+  margin-bottom: 4px;
+  font-family: var(--font-ja);
+}
+
+.character__bubble-text {
+  font-size: 0.9rem;
+  font-family: var(--font-ja);
+  line-height: 1.5;
+  color: var(--color-text);
+}

@@ -1,0 +1,19 @@
+/* ===== StarGauge ===== */
+.star-gauge {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.star-gauge__star {
+  font-size: 1.8rem;
+  color: rgba(200, 200, 200, 0.6);
+  transition: color var(--transition-bounce), transform var(--transition-bounce);
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+}
+
+.star-gauge__star--filled {
+  color: var(--color-honey);
+  animation: star-pop 0.4s var(--transition-bounce) both;
+  filter: drop-shadow(0 2px 6px rgba(255, 200, 0, 0.5));
+}

@@ -1,0 +1,104 @@
+/* ===== HomeScreen ===== */
+.home {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 48px;
+  gap: 32px;
+}
+
+/* ---- Header ---- */
+.home__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: fade-in-up 0.5s ease both;
+}
+
+.home__title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.home__title-en {
+  font-family: var(--font-en);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #4EADFF 0%, #A8E6CF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.home__title-ja {
+  font-family: var(--font-ja);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-light);
+}
+
+.home__stars {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-white);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-card);
+}
+
+.home__stars-label {
+  font-family: var(--font-ja);
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+}
+
+/* ---- Characters ---- */
+.home__characters {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fade-in-up 0.5s 0.1s ease both;
+}
+
+/* ---- Stages ---- */
+.home__stages {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: fade-in-up 0.5s 0.2s ease both;
+}
+
+.home__stages-title {
+  font-family: var(--font-ja);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.home__stage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  width: 100%;
+  justify-items: center;
+}
+
+/* ---- Footer ---- */
+.home__footer {
+  margin-top: auto;
+  font-family: var(--font-ja);
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  opacity: 0.6;
+}

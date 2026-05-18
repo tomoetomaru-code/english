@@ -1,0 +1,139 @@
+/* =====================================================
+   もふもふ英語フレンズ — Global Design System
+   ===================================================== */
+
+/* ---------- CSS Variables (Design Tokens) ---------- */
+:root {
+  /* Color Palette */
+  --color-bg: #D6EFFF;           /* ミルキーブルー（背景） */
+  --color-card: #C8F0E0;         /* マカロンミント（カード） */
+  --color-white: #FDFCFB;        /* ミルクホワイト */
+  --color-coral: #FF8A80;        /* コーラルピンク（アクセント） */
+  --color-honey: #FFD966;        /* ハニーイエロー（アクセント） */
+  --color-text: #3D3B5B;         /* メインテキスト（落ち着いた紫紺） */
+  --color-text-light: #7B79A3;   /* サブテキスト */
+  --color-shadow: rgba(100, 130, 200, 0.25);
+
+  /* Stage Colors */
+  --color-stage1: #80C9FF;       /* Word — スカイブルー */
+  --color-stage2: #A8E6CF;       /* Listen — ミントグリーン */
+  --color-stage3: #FFB3BA;       /* Talk — ローズピンク */
+
+  /* Typography */
+  --font-en: 'Quicksand', sans-serif;
+  --font-ja: 'M PLUS Rounded 1c', sans-serif;
+
+  /* Border Radius */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 32px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-card: 0 6px 20px var(--color-shadow);
+  --shadow-button: 0 6px 0 rgba(80, 100, 160, 0.3);
+  --shadow-button-pressed: 0 2px 0 rgba(80, 100, 160, 0.3);
+
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-bounce: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------- Reset & Base ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-ja);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* 英文テキストは Quicksand を優先 */
+.en, button, input {
+  font-family: var(--font-en);
+}
+
+/* ---------- Utility ---------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Keyframe Animations ---------- */
+
+/* ふわふわ浮遊（キャラクター） */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* 耳ピコピコ（ラビ） */
+@keyframes ear-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25%       { transform: rotate(-15deg); }
+  75%       { transform: rotate(15deg); }
+}
+
+/* 尻尾ブンブン（しば） */
+@keyframes tail-wag {
+  0%, 100% { transform: rotate(-20deg); }
+  50%       { transform: rotate(20deg); }
+}
+
+/* 星キラキラ */
+@keyframes star-pop {
+  0%   { transform: scale(0) rotate(0deg); opacity: 0; }
+  60%  { transform: scale(1.3) rotate(15deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* 正解フラッシュ */
+@keyframes correct-flash {
+  0%, 100% { background-color: var(--color-card); }
+  50%       { background-color: var(--color-honey); }
+}
+
+/* 不正解シェイク */
+@keyframes wrong-shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-8px); }
+  40%       { transform: translateX(8px); }
+  60%       { transform: translateX(-6px); }
+  80%       { transform: translateX(6px); }
+}
+
+/* フェードインUp */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* パルス（マイクボタン） */
+@keyframes mic-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 138, 128, 0.5); }
+  50%       { box-shadow: 0 0 0 16px rgba(255, 138, 128, 0); }
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-stage1);
+  border-radius: var(--radius-full);
+}

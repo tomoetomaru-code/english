@@ -1,0 +1,107 @@
+/* ===== Stage1: Word ===== */
+.stage1 {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px 48px;
+  gap: 20px;
+}
+
+.stage1--loading,
+.stage1--finish {
+  justify-content: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.stage1__finish-title {
+  font-family: var(--font-ja);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* ---- Header ---- */
+.stage1__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 520px;
+}
+
+.stage1__progress {
+  font-family: var(--font-en);
+  font-weight: 700;
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+}
+
+/* ---- Card ---- */
+.stage1__card {
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: var(--shadow-card);
+  transition: background 0.3s ease;
+  animation: fade-in-up 0.35s ease both;
+}
+
+.stage1__card--correct { animation: correct-flash 0.5s ease; }
+.stage1__card--wrong   { animation: wrong-shake 0.4s ease; }
+
+.stage1__instruction {
+  font-family: var(--font-ja);
+  font-size: 0.9rem;
+  color: var(--color-text-light);
+}
+
+.stage1__word-img {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  padding: 8px;
+}
+
+.stage1__ja-hint {
+  font-family: var(--font-ja);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.stage1__result {
+  font-family: var(--font-ja);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+}
+
+.stage1__result--correct {
+  background: var(--color-honey);
+  color: var(--color-text);
+}
+
+.stage1__result--wrong {
+  background: var(--color-coral);
+  color: white;
+}
+
+/* ---- Choices ---- */
+.stage1__choices {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 360px;
+}
