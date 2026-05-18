@@ -56,7 +56,6 @@ export default function Character({
   size = 'md',
 }: CharacterProps) {
   const emoji = CHARACTER_EMOJI[type][mood]
-  const face  = CHARACTER_FACE[type][mood]
   const name  = CHARACTER_NAME[type]
 
   return (
