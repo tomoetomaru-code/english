@@ -49,14 +49,7 @@ export default function Character({
       {/* キャラクター本体 */}
       <div className="character__body" aria-hidden="true">
         <span className="character__emoji">{emoji}</span>
-        {/* 耳 or 尻尾アクセント */}
-        {type === 'rabi' && (
-          <span className="character__accent character__ear">👂</span>
-        )}
-        {type === 'shiba' && (
-          <span className="character__accent character__tail">〰️</span>
-        )}
-        {/* 顔文字は非表示 */}
+        {/* アクセント・顔文字は非表示 */}
       </div>
 
       {/* 吹き出し */}
