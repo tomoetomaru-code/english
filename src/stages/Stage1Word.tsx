@@ -145,7 +145,7 @@ export default function Stage1Word({ onAddStar, onBack }: Stage1WordProps) {
 
   useEffect(() => {
     // シートデータが十分あれば使う（一度だけ初期化）
-    if (rows.length >= 10) {
+    if (rows.length >= 10 && !initialized.current) {
       const pool = rows.map((r) => ({
         word:    r[1] ?? '',
         ja:      r[2] ?? '',

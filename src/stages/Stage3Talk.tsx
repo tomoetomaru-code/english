@@ -293,7 +293,7 @@ export default function Stage3Talk({ onAddStar, onBack }: Stage3TalkProps) {
 
   // シートに5行以上あれば読み込む
   useEffect(() => {
-    if (rows.length >= 5) {
+    if (rows.length >= 5 && !initialized.current) {
       const pool: SceneItem[] = rows.map((r) => ({
         scene: r[1] ?? '',
         charLine: r[2] ?? '',

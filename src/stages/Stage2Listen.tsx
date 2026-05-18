@@ -74,7 +74,7 @@ export default function Stage2Listen({ onAddStar, onBack }: Stage2ListenProps) {
   const [finished, setFinished] = useState(false)
 
   useEffect(() => {
-    if (rows.length >= 10) {
+    if (rows.length >= 10 && !initialized.current) {
       const pool = rows.map((r) => {
         const words = (r[3] ?? '').split(' ').filter(Boolean)
         const dummies = (r[4] ?? '').split(' ').filter(Boolean)
