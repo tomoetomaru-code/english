@@ -25,20 +25,6 @@ const CHARACTER_EMOJI: Record<CharacterType, Record<CharacterMood, string>> = {
   },
 }
 
-const CHARACTER_FACE: Record<CharacterType, Record<CharacterMood, string>> = {
-  rabi: {
-    normal: '(◕‿◕)',
-    happy:  '(≧▽≦)',
-    cheer:  '(ง •̀_•́)ง',
-    think:  '(・_・ヾ',
-  },
-  shiba: {
-    normal: '(=^▽^=)',
-    happy:  '≧(´▽｀)≦',
-    cheer:  '(ﾉ≧∀≦)ﾉ',
-    think:  '(・_・)?',
-  },
-}
 
 const CHARACTER_NAME: Record<CharacterType, string> = {
   rabi:  'ラビ',
