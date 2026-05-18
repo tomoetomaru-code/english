@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import Character from '../components/Character'
 import PuffyButton from '../components/PuffyButton'
 import StarGauge from '../components/StarGauge'
@@ -264,6 +264,12 @@ const SCENARIO_FALLBACK: SceneItem[] = [
   },
 ]
 
+const SCENES_PER_ROUND = 5
+
+function shuffle<T>(arr: T[]): T[] {
+  return [...arr].sort(() => Math.random() - 0.5)
+}
+
 interface Stage3TalkProps {
   onAddStar: () => void
   onBack: () => void
@@ -276,7 +282,8 @@ export default function Stage3Talk({ onAddStar, onBack }: Stage3TalkProps) {
   const { isSupported, recognize } = useRecognition()
   const { rows } = useSheetData(SHEET_CSV_URL)
 
-  const [scenario, setScenario] = useState<SceneItem[]>(SCENARIO_FALLBACK)
+  const initialized = useRef(false)
+  const [scenario, setScenario] = useState<SceneItem[]>(() => shuffle(SCENARIO_FALLBACK).slice(0, SCENES_PER_ROUND))
   const [sceneIndex, setSceneIndex] = useState(0)
   const [stars, setStars] = useState(0)
   const [micState, setMicState] = useState<MicState>('idle')
@@ -287,7 +294,7 @@ export default function Stage3Talk({ onAddStar, onBack }: Stage3TalkProps) {
   // シートに5行以上あれば読み込む
   useEffect(() => {
     if (rows.length >= 5) {
-      const data: SceneItem[] = rows.map((r) => ({
+      const pool: SceneItem[] = rows.map((r) => ({
         scene: r[1] ?? '',
         charLine: r[2] ?? '',
         charLineJa: `（${r[3] ?? ''}）`,
@@ -295,8 +302,13 @@ export default function Stage3Talk({ onAddStar, onBack }: Stage3TalkProps) {
         acceptWords: (r[5] ?? '').split(' ').filter(Boolean),
         hint: `「${r[4] ?? ''}」と言ってみよう`,
       }))
-      setScenario(data)
+      setScenario(shuffle(pool).slice(0, SCENES_PER_ROUND))
       setSceneIndex(0)
+      initialized.current = true
+    } else if (!initialized.current) {
+      setScenario(shuffle(SCENARIO_FALLBACK).slice(0, SCENES_PER_ROUND))
+      setSceneIndex(0)
+      initialized.current = true
     }
   }, [rows])
 
@@ -379,7 +391,7 @@ export default function Stage3Talk({ onAddStar, onBack }: Stage3TalkProps) {
       {/* ヘッダー */}
       <div className="stage3__header">
         <PuffyButton variant="ghost" size="sm" onClick={onBack}>← もどる</PuffyButton>
-        <StarGauge stars={stars} maxStars={Math.min(scenario.length, 5)} />
+        <StarGauge stars={stars} maxStars={SCENES_PER_ROUND} />
         <span className="stage3__progress">{sceneIndex + 1} / {scenario.length}</span>
       </div>
 

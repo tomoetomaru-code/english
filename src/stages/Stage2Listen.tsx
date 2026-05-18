@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Character from '../components/Character'
 import PuffyButton from '../components/PuffyButton'
 import StarGauge from '../components/StarGauge'
@@ -42,7 +42,7 @@ const SAMPLE_SENTENCES = [
   { sentence: 'Let us play together.',      ja: 'いっしょに遊びましょう。',             words: ['Let','us','play','together.'],              dummies: ['eat','she'] },
 ]
 
-const QUESTIONS_PER_ROUND = 8
+const QUESTIONS_PER_ROUND = 5
 
 interface SentenceItem {
   sentence: string
@@ -64,6 +64,7 @@ export default function Stage2Listen({ onAddStar, onBack }: Stage2ListenProps) {
   const { speak } = useSpeech()
   const { rows } = useSheetData(SHEET_CSV_URL)
 
+  const initialized = useRef(false)
   const [questions, setQuestions] = useState<SentenceItem[]>([])
   const [index, setIndex] = useState(0)
   const [stars, setStars] = useState(0)
@@ -73,18 +74,20 @@ export default function Stage2Listen({ onAddStar, onBack }: Stage2ListenProps) {
   const [finished, setFinished] = useState(false)
 
   useEffect(() => {
-    let pool: SentenceItem[]
     if (rows.length >= 10) {
-      pool = rows.map((r) => {
+      const pool = rows.map((r) => {
         const words = (r[3] ?? '').split(' ').filter(Boolean)
         const dummies = (r[4] ?? '').split(' ').filter(Boolean)
         return { sentence: r[1] ?? '', ja: r[2] ?? '', words, dummies }
       })
-    } else {
-      pool = SAMPLE_SENTENCES
+      setQuestions(shuffle(pool).slice(0, QUESTIONS_PER_ROUND))
+      setIndex(0)
+      initialized.current = true
+    } else if (!initialized.current) {
+      setQuestions(shuffle(SAMPLE_SENTENCES).slice(0, QUESTIONS_PER_ROUND))
+      setIndex(0)
+      initialized.current = true
     }
-    setQuestions(shuffle(pool).slice(0, QUESTIONS_PER_ROUND))
-    setIndex(0)
   }, [rows])
 
   const current = questions[index]

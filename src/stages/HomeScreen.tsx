@@ -28,8 +28,7 @@ export default function HomeScreen({ totalStars, onSelectStage }: HomeScreenProp
 
       {/* キャラクター */}
       <section className="home__characters" aria-label="キャラクター">
-        <Character type="rabi" mood="cheer" message="いっしょにえいごをまなぼう！" size="md" />
-        <Character type="shiba" mood="happy" size="md" />
+        <Character type="rabi" mood="cheer" size="lg" />
       </section>
 
       {/* ステージ選択 */}

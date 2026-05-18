@@ -71,7 +71,7 @@ export default function Character({
         {type === 'shiba' && (
           <span className="character__accent character__tail">〰️</span>
         )}
-        <span className="character__face">{face}</span>
+        {/* 顔文字は非表示 */}
       </div>
 
       {/* 吹き出し */}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Character from '../components/Character'
 import PuffyButton from '../components/PuffyButton'
 import StarGauge from '../components/StarGauge'
@@ -121,7 +121,7 @@ function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5)
 }
 
-const QUESTIONS_PER_ROUND = 10
+const QUESTIONS_PER_ROUND = 5
 
 interface Stage1WordProps {
   onAddStar: () => void
@@ -134,6 +134,7 @@ export default function Stage1Word({ onAddStar, onBack }: Stage1WordProps) {
   const { speak } = useSpeech()
   const { rows } = useSheetData(SHEET_CSV_URL)
 
+  const initialized = useRef(false)
   const [questions, setQuestions] = useState<WordItem[]>([])
   const [index, setIndex] = useState(0)
   const [stars, setStars] = useState(0)
@@ -143,19 +144,23 @@ export default function Stage1Word({ onAddStar, onBack }: Stage1WordProps) {
   const [finished, setFinished] = useState(false)
 
   useEffect(() => {
-    let pool: WordItem[]
+    // シートデータが十分あれば使う（一度だけ初期化）
     if (rows.length >= 10) {
-      pool = rows.map((r) => ({
+      const pool = rows.map((r) => ({
         word:    r[1] ?? '',
         ja:      r[2] ?? '',
         choices: shuffle([r[1] ?? '', r[3] ?? '', r[4] ?? '']),
         img:     r[5] ?? '',
       }))
-    } else {
-      pool = SAMPLE_WORDS
+      setQuestions(shuffle(pool).slice(0, QUESTIONS_PER_ROUND))
+      setIndex(0)
+      initialized.current = true
+    } else if (!initialized.current) {
+      // シートなし → サンプルで初期化（1回のみ）
+      setQuestions(shuffle(SAMPLE_WORDS).slice(0, QUESTIONS_PER_ROUND))
+      setIndex(0)
+      initialized.current = true
     }
-    setQuestions(shuffle(pool).slice(0, QUESTIONS_PER_ROUND))
-    setIndex(0)
   }, [rows])
 
   useEffect(() => {
