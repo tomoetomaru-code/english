@@ -2,6 +2,25 @@ import { useCallback } from 'react'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// iOS Audio Unlock
+// iOSはユーザー操作なしの音声再生を禁止する。
+// 最初のタッチ/クリック時に無音発話でspeechSynthesisをアンロックする。
+let _speechUnlocked = false
+
+function _unlockSpeech() {
+  if (_speechUnlocked || !window.speechSynthesis) return
+  const u = new SpeechSynthesisUtterance(' ')
+  u.volume = 0
+  u.rate = 10
+  window.speechSynthesis.speak(u)
+  _speechUnlocked = true
+}
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('touchstart', _unlockSpeech, { once: true, passive: true })
+  document.addEventListener('click', _unlockSpeech, { once: true })
+}
+
 export function useSpeech() {
   const speak = useCallback((text: string, lang = 'en-US') => {
     if (!window.speechSynthesis) return
