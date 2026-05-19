@@ -9,7 +9,7 @@ interface HomeScreenProps {
 
 const STAGE_CONFIG = [
   { type: 1 as const, key: 'word'   as const, emoji: '📖', title: 'Word',   subtitle: 'えいたんごクイズ🎵', colorKey: 'stage1', maxLevels: 3 },
-  { type: 2 as const, key: 'listen' as const, emoji: '🎧', title: 'Listen', subtitle: 'ならべかえ問題🧩',   colorKey: 'stage2', maxLevels: 3 },
+  { type: 2 as const, key: 'listen' as const, emoji: '🎧', title: 'Listen', subtitle: 'ならべかえ問題🧩',   colorKey: 'stage2', maxLevels: 4 },
   { type: 3 as const, key: 'talk'   as const, emoji: '💬', title: 'Talk',   subtitle: 'ロールプレイ🎤',     colorKey: 'stage3', maxLevels: 4 },
 ]
 

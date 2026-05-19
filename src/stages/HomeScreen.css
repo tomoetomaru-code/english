@@ -189,12 +189,3 @@
   font-weight: 700;
   color: var(--color-text);
 }
-
-/* ---- Footer ---- */
-.home__footer {
-  margin-top: auto;
-  font-family: var(--font-ja);
-  font-size: 0.75rem;
-  color: var(--color-text-light);
-  opacity: 0.6;
-}

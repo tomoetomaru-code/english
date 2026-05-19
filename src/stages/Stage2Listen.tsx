@@ -9,6 +9,7 @@ import './Stage2Listen.css'
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmK15QD8nc0XpAVAzR3d5-YXr6UfDnEG-hsg4KSoNNszvFHGzzZVglo1lKmzzIrlSlNQmDBjyMs55/pub?gid=360174079&single=true&output=csv'
 
 const SAMPLE_SENTENCES = [
+  // --- Lv.1 (0-7) ---
   { sentence: 'I like apples.',             ja: 'わたしはりんごが好きです。',          words: ['I','like','apples.'],                        dummies: ['eat','he'] },
   { sentence: 'I have a dog.',              ja: 'わたしはいぬを飼っています。',         words: ['I','have','a','dog.'],                       dummies: ['cat','she'] },
   { sentence: 'She has a cute cat.',        ja: '彼女はかわいいねこを飼っています。',   words: ['She','has','a','cute','cat.'],               dummies: ['dog','his'] },
@@ -17,6 +18,8 @@ const SAMPLE_SENTENCES = [
   { sentence: 'I can play soccer.',         ja: 'わたしはサッカーができます。',         words: ['I','can','play','soccer.'],                 dummies: ['run','tennis'] },
   { sentence: 'I want to eat pizza.',       ja: 'わたしはピザが食べたいです。',         words: ['I','want','to','eat','pizza.'],             dummies: ['drink','bread'] },
   { sentence: 'I like music.',              ja: 'わたしは音楽が好きです。',             words: ['I','like','music.'],                        dummies: ['hate','art'] },
+
+  // --- Lv.2 (8-15) ---
   { sentence: 'This is my bag.',            ja: 'これはわたしのかばんです。',           words: ['This','is','my','bag.'],                   dummies: ['her','pen'] },
   { sentence: 'That is a big dog.',         ja: 'あれはおおきないぬです。',             words: ['That','is','a','big','dog.'],               dummies: ['small','cat'] },
   { sentence: 'I am twelve years old.',     ja: 'わたしは12歳です。',                  words: ['I','am','twelve','years','old.'],           dummies: ['ten','she'] },
@@ -25,6 +28,8 @@ const SAMPLE_SENTENCES = [
   { sentence: 'Do you like sports?',        ja: 'あなたはスポーツが好きですか？',       words: ['Do','you','like','sports?'],                dummies: ['does','he'] },
   { sentence: 'Yes I do.',                  ja: 'はい、好きです。',                    words: ['Yes','I','do.'],                           dummies: ['No','she'] },
   { sentence: 'No I do not.',               ja: 'いいえ、好きではありません。',         words: ['No','I','do','not.'],                       dummies: ['Yes','she'] },
+
+  // --- Lv.3 (16-23) ---
   { sentence: 'What is your name?',         ja: 'あなたの名前は何ですか？',             words: ['What','is','your','name?'],                 dummies: ['Where','how'] },
   { sentence: 'My name is Taro.',           ja: 'わたしの名前は太郎です。',             words: ['My','name','is','Taro.'],                  dummies: ['Her','your'] },
   { sentence: 'Where do you live?',         ja: 'あなたはどこに住んでいますか？',       words: ['Where','do','you','live?'],                 dummies: ['What','he'] },
@@ -33,15 +38,22 @@ const SAMPLE_SENTENCES = [
   { sentence: 'I eat breakfast every morning.', ja: 'わたしは毎朝朝ごはんを食べます。', words: ['I','eat','breakfast','every','morning.'],  dummies: ['lunch','she'] },
   { sentence: 'Turn right at the corner.',  ja: 'かどを右に曲がってください。',         words: ['Turn','right','at','the','corner.'],       dummies: ['left','go'] },
   { sentence: 'Go straight for two blocks.',ja: '2ブロックまっすぐ進んでください。',   words: ['Go','straight','for','two','blocks.'],     dummies: ['right','three'] },
+
+  // --- Lv.4 (24-33) ---
   { sentence: 'How is the weather today?',  ja: '今日の天気はどうですか？',             words: ['How','is','the','weather','today?'],       dummies: ['What','tomorrow'] },
   { sentence: 'It is sunny today.',         ja: '今日は晴れです。',                    words: ['It','is','sunny','today.'],                dummies: ['rainy','cloudy'] },
   { sentence: 'I want to be a doctor.',     ja: 'わたしはお医者さんになりたいです。',   words: ['I','want','to','be','a','doctor.'],         dummies: ['teacher','she'] },
   { sentence: 'She is a kind teacher.',     ja: '彼女はやさしい先生です。',             words: ['She','is','a','kind','teacher.'],           dummies: ['doctor','he'] },
   { sentence: 'We have math on Monday.',    ja: '月曜日に算数があります。',             words: ['We','have','math','on','Monday.'],          dummies: ['science','Friday'] },
   { sentence: 'Let us play together.',      ja: 'いっしょに遊びましょう。',             words: ['Let','us','play','together.'],              dummies: ['eat','she'] },
+  { sentence: 'What did you do yesterday?', ja: 'きのうは何をしましたか？',             words: ['What','did','you','do','yesterday?'],       dummies: ['Where','he'] },
+  { sentence: 'I went to the park.',        ja: 'わたしは公園へ行きました。',           words: ['I','went','to','the','park.'],              dummies: ['come','school'] },
+  { sentence: 'What are you going to do?',  ja: 'あなたは何をする予定ですか？',         words: ['What','are','you','going','to','do?'],      dummies: ['did','he'] },
+  { sentence: 'I am going to study English.',ja: 'わたしは英語を勉強する予定です。',     words: ['I','am','going','to','study','English.'],   dummies: ['math','she'] },
 ]
 
 const QUESTIONS_PER_ROUND = 5
+const MAX_LEVELS = 4
 
 interface SentenceItem {
   sentence: string
@@ -89,11 +101,11 @@ export default function Stage2Listen({ level, onAddStar, onClearLevel, onBack }:
         const dummies = (r[4] ?? '').split(' ').filter(Boolean)
         return { sentence: r[1] ?? '', ja: r[2] ?? '', words, dummies }
       })
-      setQuestions(shuffle(getLevelPool(pool, level)).slice(0, QUESTIONS_PER_ROUND))
+      setQuestions(shuffle(getLevelPool(pool, level, MAX_LEVELS)).slice(0, QUESTIONS_PER_ROUND))
       setIndex(0)
       initialized.current = true
     } else {
-      setQuestions(shuffle(getLevelPool(SAMPLE_SENTENCES, level)).slice(0, QUESTIONS_PER_ROUND))
+      setQuestions(shuffle(getLevelPool(SAMPLE_SENTENCES, level, MAX_LEVELS)).slice(0, QUESTIONS_PER_ROUND))
       setIndex(0)
       initialized.current = true
     }

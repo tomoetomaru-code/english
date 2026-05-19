@@ -94,7 +94,7 @@ interface Stage3TalkProps {
   onBack: () => void
 }
 
-type MicState = 'idle' | 'listening' | 'correct' | 'wrong'
+type MicState = 'idle' | 'listening' | 'confirming' | 'correct' | 'wrong'
 
 export default function Stage3Talk({ level, onAddStar, onClearLevel, onBack }: Stage3TalkProps) {
   const { speak } = useSpeech()
@@ -176,34 +176,8 @@ export default function Stage3Talk({ level, onAddStar, onClearLevel, onBack }: S
       onResult: (text) => {
         clearMicTimeout()
         setTranscript(text)
-
-        const isYesNoQuestion = /^(Do|Can|Is|Are|Have|Has|Will|Would|Should)\b/i.test(current.charLine)
-        const isCorrect =
-          current.acceptWords.some((w) => text.toLowerCase().includes(w.toLowerCase())) ||
-          (isYesNoQuestion && /\b(yes|no)\b/i.test(text))
-
-        if (isCorrect) {
-          setMicState('correct')
-          startTyping('すごい！上手に言えたね！')
-          setStars((s) => s + 1)
-          onAddStar()
-          speak('Great job!')
-          setTimeout(() => {
-            if (sceneIndex + 1 >= scenario.length) {
-              onClearLevel()
-              setFinished(true)
-            } else {
-              setSceneIndex((i) => i + 1)
-              setMicState('idle')
-              setTranscript('')
-            }
-          }, 1500)
-        } else {
-          setMicState('wrong')
-          startTyping('もう一度チャレンジしてね！')
-          speak('Try again!')
-          setTimeout(() => { setMicState('idle'); setTranscript('') }, 1200)
-        }
+        setMicState('confirming')
+        setTypingText('')
       },
       onError: () => {
         clearMicTimeout()
@@ -217,7 +191,45 @@ export default function Stage3Talk({ level, onAddStar, onClearLevel, onBack }: S
       },
     })
     stopRecognizeRef.current = stopFn
-  }, [micState, current, recognize, onAddStar, speak, sceneIndex, scenario.length, startTyping, onClearLevel, clearMicTimeout])
+  }, [micState, current, recognize, clearMicTimeout, startTyping])
+
+  const handleConfirm = useCallback(() => {
+    if (!current || micState !== 'confirming') return
+
+    const isYesNoQuestion = /^(Do|Can|Is|Are|Have|Has|Will|Would|Should)\b/i.test(current.charLine)
+    const isCorrect =
+      current.acceptWords.some((w) => transcript.toLowerCase().includes(w.toLowerCase())) ||
+      (isYesNoQuestion && /\b(yes|no)\b/i.test(transcript))
+
+    if (isCorrect) {
+      setMicState('correct')
+      startTyping('すごい！上手に言えたね！')
+      setStars((s) => s + 1)
+      onAddStar()
+      speak('Great job!')
+      setTimeout(() => {
+        if (sceneIndex + 1 >= scenario.length) {
+          onClearLevel()
+          setFinished(true)
+        } else {
+          setSceneIndex((i) => i + 1)
+          setMicState('idle')
+          setTranscript('')
+        }
+      }, 1500)
+    } else {
+      setMicState('wrong')
+      startTyping('もう一度チャレンジしてね！')
+      speak('Try again!')
+      setTimeout(() => { setMicState('idle'); setTranscript('') }, 1200)
+    }
+  }, [micState, current, transcript, startTyping, onAddStar, speak, sceneIndex, scenario.length, onClearLevel])
+
+  const handleRetry = useCallback(() => {
+    setMicState('idle')
+    setTranscript('')
+    setTypingText('')
+  }, [])
 
   if (!current && !finished) {
     return <div className="stage3"><p>データを読み込み中…</p></div>
@@ -263,27 +275,40 @@ export default function Stage3Talk({ level, onAddStar, onClearLevel, onBack }: S
         <p className={`stage3__typing stage3__typing--${micState}`}>{typingText}</p>
       )}
 
-      {transcript && (
-        <div className="stage3__transcript">
-          <span className="stage3__transcript-label">あなたの声：</span>
-          <span className="stage3__transcript-text">"{transcript}"</span>
+      {micState === 'confirming' ? (
+        <div className="stage3__confirm-area">
+          <p className="stage3__confirm-label">アプリが聞き取った内容：</p>
+          <p className="stage3__confirm-text">&ldquo;{transcript}&rdquo;</p>
+          <div className="stage3__confirm-btns">
+            <PuffyButton variant="honey" onClick={handleRetry}>もう一度話す</PuffyButton>
+            <PuffyButton variant="coral" onClick={handleConfirm}>これで回答する</PuffyButton>
+          </div>
         </div>
-      )}
-
-      {!isSupported ? (
-        <p className="stage3__no-mic">このブラウザは音声認識に対応していません</p>
       ) : (
-        <button
-          className={`stage3__mic-btn stage3__mic-btn--${micState}`}
-          onClick={handleListen}
-          disabled={micState === 'listening'}
-          aria-label={micState === 'listening' ? '録音中' : 'マイクで話す'}
-        >
-          <span className="stage3__mic-icon">{micState === 'listening' ? 'REC' : 'MIC'}</span>
-          <span className="stage3__mic-label">
-            {micState === 'listening' ? '聴いてるよ…' : 'ここをおして 話してね！'}
-          </span>
-        </button>
+        <>
+          {transcript && micState !== 'idle' && (
+            <div className="stage3__transcript">
+              <span className="stage3__transcript-label">あなたの声：</span>
+              <span className="stage3__transcript-text">&ldquo;{transcript}&rdquo;</span>
+            </div>
+          )}
+
+          {!isSupported ? (
+            <p className="stage3__no-mic">このブラウザは音声認識に対応していません</p>
+          ) : (
+            <button
+              className={`stage3__mic-btn stage3__mic-btn--${micState}`}
+              onClick={handleListen}
+              disabled={micState === 'listening' || micState === 'correct' || micState === 'wrong'}
+              aria-label={micState === 'listening' ? '録音中' : 'マイクで話す'}
+            >
+              <span className="stage3__mic-icon">{micState === 'listening' ? 'REC' : 'MIC'}</span>
+              <span className="stage3__mic-label">
+                {micState === 'listening' ? '聴いてるよ…' : 'ここをおして 話してね！'}
+              </span>
+            </button>
+          )}
+        </>
       )}
     </div>
   )

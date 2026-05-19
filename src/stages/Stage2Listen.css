@@ -142,9 +142,4 @@
 .stage2__level-badge {
   font-family: var(--font-ja);
   font-size: 0.85rem;
-  font-weight: 700;
-  background: var(--color-stage2);
-  color: var(--color-white);
-  padding: 6px 18px;
-  border-radius: var(--radius-full);
-}
+  font-wei
