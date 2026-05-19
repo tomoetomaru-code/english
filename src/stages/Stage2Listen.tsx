@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import Character from '../components/Character'
 import PuffyButton from '../components/PuffyButton'
 import StarGauge from '../components/StarGauge'
-import { useSpeech } from '../hooks/useSpeech'
+import { useSpeech, isIOSDevice } from '../hooks/useSpeech'
 import { useSheetData } from '../hooks/useSheetData'
 import './Stage2Listen.css'
 
@@ -79,6 +79,7 @@ export default function Stage2Listen({ level, onAddStar, onClearLevel, onBack }:
   const [answer, setAnswer] = useState<string[]>([])
   const [checked, setChecked] = useState<'idle' | 'correct' | 'wrong'>('idle')
   const [finished, setFinished] = useState(false)
+  const [awaitingTap, setAwaitingTap] = useState(false)
 
   useEffect(() => {
     if (initialized.current) return
@@ -109,14 +110,22 @@ export default function Stage2Listen({ level, onAddStar, onClearLevel, onBack }:
   }, [index, current])
 
   const handleSpeak = useCallback(() => {
-    if (current) speak(current.sentence)
+    if (current) {
+      setAwaitingTap(false)
+      speak(current.sentence)
+    }
   }, [current, speak])
 
   useEffect(() => {
-    if (current) {
-      const t = setTimeout(() => speak(current.sentence), 500)
-      return () => clearTimeout(t)
+    if (!current) return
+    if (isIOSDevice()) {
+      // iOS はユーザー操作なしの自動再生が禁止されているのでスキップ
+      setAwaitingTap(true)
+      return
     }
+    setAwaitingTap(false)
+    const t = setTimeout(() => speak(current.sentence), 500)
+    return () => clearTimeout(t)
   }, [current]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const selectWord = (word: string, idx: number) => {
@@ -182,7 +191,7 @@ export default function Stage2Listen({ level, onAddStar, onClearLevel, onBack }:
       <div className={['stage2__card', checked !== 'idle' ? `stage2__card--${checked}` : ''].join(' ')}>
         <p className="stage2__instruction">英語を聴いて、ことばを正しい順番にならべよう！</p>
         <p className="stage2__ja">{current.ja}</p>
-        <PuffyButton variant="honey" onClick={handleSpeak}>🔊 もう一度 聴く</PuffyButton>
+        <PuffyButton variant="honey" onClick={handleSpeak}>🔊 {awaitingTap ? 'おして聴こう！' : 'もう一度 聴く'}</PuffyButton>
         {checked !== 'idle' && (
           <p className={`stage2__result stage2__result--${checked}`}>
             {checked === 'correct' ? '⭐ せいかい！' : 'もう一度ならべよう！'}

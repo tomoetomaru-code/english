@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import Character from '../components/Character'
 import PuffyButton from '../components/PuffyButton'
 import StarGauge from '../components/StarGauge'
-import { useSpeech } from '../hooks/useSpeech'
+import { useSpeech, isIOSDevice } from '../hooks/useSpeech'
 import { useSheetData } from '../hooks/useSheetData'
 import './Stage1Word.css'
 
@@ -133,6 +133,7 @@ export default function Stage1Word({ level, onAddStar, onClearLevel, onBack }: S
   const [shuffledChoices, setShuffledChoices] = useState<string[]>([])
   const [charMood, setCharMood] = useState<'cheer' | 'happy' | 'normal'>('cheer')
   const [finished, setFinished] = useState(false)
+  const [awaitingTap, setAwaitingTap] = useState(false)
 
   useEffect(() => {
     if (initialized.current) return
@@ -162,14 +163,22 @@ export default function Stage1Word({ level, onAddStar, onClearLevel, onBack }: S
   const current = questions[index]
 
   const handleSpeak = useCallback(() => {
-    if (current) speak(current.word)
+    if (current) {
+      setAwaitingTap(false)
+      speak(current.word)
+    }
   }, [current, speak])
 
   useEffect(() => {
-    if (current) {
-      const t = setTimeout(() => speak(current.word), 500)
-      return () => clearTimeout(t)
+    if (!current) return
+    if (isIOSDevice()) {
+      // iOS はユーザー操作なしの自動再生が禁止されているのでスキップ
+      setAwaitingTap(true)
+      return
     }
+    setAwaitingTap(false)
+    const t = setTimeout(() => speak(current.word), 500)
+    return () => clearTimeout(t)
   }, [current]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChoose = (choice: string) => {
@@ -224,7 +233,7 @@ export default function Stage1Word({ level, onAddStar, onClearLevel, onBack }: S
         {current.img && <img src={current.img} alt={current.ja} className="stage1__word-img" />}
         <p className="stage1__ja-hint">「{current.ja}」</p>
         <PuffyButton variant="honey" size="lg" onClick={handleSpeak} aria-label="音声を聴く">
-          🔊 もう一度 聴く
+          🔊 {awaitingTap ? 'おして聴こう！' : 'もう一度 聴く'}
         </PuffyButton>
         {answerState === 'correct' && <p className="stage1__result stage1__result--correct">⭐ せいかい！すごい！</p>}
         {answerState === 'wrong'   && <p className="stage1__result stage1__result--wrong">もう一度チャレンジ！</p>}

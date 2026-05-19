@@ -78,6 +78,8 @@ export default function Stage3Talk({ level, onAddStar, onClearLevel, onBack }: S
   const { rows } = useSheetData(SHEET_CSV_URL)
 
   const initialized = useRef(false)
+  const stopRecognizeRef = useRef<(() => void) | null>(null)
+  const micTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [scenario, setScenario] = useState<SceneItem[]>([])
   const [sceneIndex, setSceneIndex] = useState(0)
   const [stars, setStars] = useState(0)
@@ -125,14 +127,31 @@ export default function Stage3Talk({ level, onAddStar, onClearLevel, onBack }: S
     }, 40)
   }, [])
 
+  const clearMicTimeout = useCallback(() => {
+    if (micTimeoutRef.current) {
+      clearTimeout(micTimeoutRef.current)
+      micTimeoutRef.current = null
+    }
+  }, [])
+
   const handleListen = useCallback(() => {
     if (micState !== 'idle' || !current) return
     setMicState('listening')
     setTranscript('')
     startTyping('うーん…聴いてるよ🎤')
 
-    recognize({
+    // 10秒で自動タイムアウト
+    clearMicTimeout()
+    micTimeoutRef.current = setTimeout(() => {
+      stopRecognizeRef.current?.()
+      stopRecognizeRef.current = null
+      setMicState('idle')
+      startTyping('もう一度おしてね！')
+    }, 10000)
+
+    const stopFn = recognize({
       onResult: (text) => {
+        clearMicTimeout()
         setTranscript(text)
         const isCorrect = current.acceptWords.some((w) =>
           text.toLowerCase().includes(w.toLowerCase()),
@@ -161,11 +180,19 @@ export default function Stage3Talk({ level, onAddStar, onClearLevel, onBack }: S
         }
       },
       onError: () => {
+        clearMicTimeout()
         setMicState('idle')
         startTyping('うまく聞き取れなかったよ…もう一度！')
       },
+      onEnd: () => {
+        // 結果なしで認識終了（無音タイムアウトなど）
+        clearMicTimeout()
+        setMicState('idle')
+        startTyping('もう一度おしてね！')
+      },
     })
-  }, [micState, current, recognize, onAddStar, speak, sceneIndex, scenario.length, startTyping, onClearLevel])
+    stopRecognizeRef.current = stopFn
+  }, [micState, current, recognize, onAddStar, speak, sceneIndex, scenario.length, startTyping, onClearLevel, clearMicTimeout])
 
   if (!current && !finished) {
     return <div className="stage3"><p>データを読み込み中…</p></div>
