@@ -143,6 +143,14 @@
   gap: 10px;
 }
 
+/* Talk の Lv.4 は 2×2 グリッドにする */
+.home__level-row--4 {
+  flex-wrap: wrap;
+}
+.home__level-row--4 .home__level-btn {
+  min-width: calc(50% - 6px);
+}
+
 .home__level-btn {
   flex: 1;
   display: flex;

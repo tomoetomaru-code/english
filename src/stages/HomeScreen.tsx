@@ -1,8 +1,6 @@
 import Character from '../components/Character'
 import './HomeScreen.css'
 
-const MAX_LEVELS = 3
-
 interface HomeScreenProps {
   totalStars: number
   cleared: { word: number[]; listen: number[]; talk: number[] }
@@ -10,9 +8,9 @@ interface HomeScreenProps {
 }
 
 const STAGE_CONFIG = [
-  { type: 1 as const, key: 'word'   as const, emoji: '📖', title: 'Word',   subtitle: 'えいたんごクイズ🎵', colorKey: 'stage1' },
-  { type: 2 as const, key: 'listen' as const, emoji: '🎧', title: 'Listen', subtitle: 'ならべかえ問題🧩',   colorKey: 'stage2' },
-  { type: 3 as const, key: 'talk'   as const, emoji: '💬', title: 'Talk',   subtitle: 'ロールプレイ🎤',     colorKey: 'stage3' },
+  { type: 1 as const, key: 'word'   as const, emoji: '📖', title: 'Word',   subtitle: 'えいたんごクイズ🎵', colorKey: 'stage1', maxLevels: 3 },
+  { type: 2 as const, key: 'listen' as const, emoji: '🎧', title: 'Listen', subtitle: 'ならべかえ問題🧩',   colorKey: 'stage2', maxLevels: 3 },
+  { type: 3 as const, key: 'talk'   as const, emoji: '💬', title: 'Talk',   subtitle: 'ロールプレイ🎤',     colorKey: 'stage3', maxLevels: 4 },
 ]
 
 export default function HomeScreen({ totalStars, cleared, onSelectStage }: HomeScreenProps) {
@@ -42,7 +40,7 @@ export default function HomeScreen({ totalStars, cleared, onSelectStage }: HomeS
       <section className="home__stages" aria-label="ステージを選ぼう">
         <h2 className="home__stages-title">ステージを えらぼう！</h2>
         <div className="home__stage-grid">
-          {STAGE_CONFIG.map(({ type, key, emoji, title, subtitle, colorKey }) => (
+          {STAGE_CONFIG.map(({ type, key, emoji, title, subtitle, colorKey, maxLevels }) => (
             <div key={type} className={`home__stage-card home__stage-card--${colorKey}`}>
               <div className="home__stage-header">
                 <span className="home__stage-emoji">{emoji}</span>
@@ -51,8 +49,8 @@ export default function HomeScreen({ totalStars, cleared, onSelectStage }: HomeS
                   <p className="home__stage-subtitle">{subtitle}</p>
                 </div>
               </div>
-              <div className="home__level-row">
-                {Array.from({ length: MAX_LEVELS }, (_, i) => {
+              <div className={`home__level-row${maxLevels === 4 ? ' home__level-row--4' : ''}`}>
+                {Array.from({ length: maxLevels }, (_, i) => {
                   const lv = i + 1
                   const unlocked = isUnlocked(key, lv)
                   const done = isCleared(key, lv)
