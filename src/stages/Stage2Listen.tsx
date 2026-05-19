@@ -116,10 +116,16 @@ export default function Stage2Listen({ level, onAddStar, onClearLevel, onBack }:
     }
   }, [current, speak])
 
+  const handleSpeakSlow = useCallback(() => {
+    if (current) {
+      setAwaitingTap(false)
+      speak(current.sentence, 'en-US', 0.5)
+    }
+  }, [current, speak])
+
   useEffect(() => {
     if (!current) return
     if (isIOSDevice()) {
-      // iOS はユーザー操作なしの自動再生が禁止されているのでスキップ
       setAwaitingTap(true)
       return
     }
@@ -166,14 +172,14 @@ export default function Stage2Listen({ level, onAddStar, onClearLevel, onBack }:
   }
 
   if (!current && !finished) {
-    return <div className="stage2 stage2--loading"><p>データを読み込み中…🐕</p></div>
+    return <div className="stage2 stage2--loading"><p>データを読み込み中…</p></div>
   }
 
   if (finished) {
     return (
       <div className="stage2 stage2--finish">
-        <Character type="shiba" mood="happy" message={`Lv.${level} クリア！\n⭐ ${stars}こ ゲット！`} size="lg" />
-        <h2>よくできました！🎉</h2>
+        <Character type="shiba" mood="happy" message={`Lv.${level} クリア！\n${stars}こ ゲット！`} size="lg" />
+        <h2>よくできました！</h2>
         <PuffyButton variant="primary" size="lg" onClick={onBack}>ホームへもどる</PuffyButton>
       </div>
     )
@@ -186,15 +192,22 @@ export default function Stage2Listen({ level, onAddStar, onClearLevel, onBack }:
         <StarGauge stars={stars} maxStars={QUESTIONS_PER_ROUND} />
         <span className="stage2__progress">{index + 1} / {questions.length}</span>
       </div>
-      <div className="stage2__level-badge">🎧 Listen — Lv.{level}</div>
+      <div className="stage2__level-badge">Listen — Lv.{level}</div>
       <Character type="shiba" mood="cheer" size="sm" />
       <div className={['stage2__card', checked !== 'idle' ? `stage2__card--${checked}` : ''].join(' ')}>
         <p className="stage2__instruction">英語を聴いて、ことばを正しい順番にならべよう！</p>
         <p className="stage2__ja">{current.ja}</p>
-        <PuffyButton variant="honey" onClick={handleSpeak}>🔊 {awaitingTap ? 'おして聴こう！' : 'もう一度 聴く'}</PuffyButton>
+        <div className="stage2__speak-row">
+          <PuffyButton variant="honey" onClick={handleSpeak}>
+            {awaitingTap ? 'おして聴こう！' : 'もう一度 聴く'}
+          </PuffyButton>
+          <PuffyButton variant="honey" onClick={handleSpeakSlow}>
+            ゆっくり
+          </PuffyButton>
+        </div>
         {checked !== 'idle' && (
           <p className={`stage2__result stage2__result--${checked}`}>
-            {checked === 'correct' ? '⭐ せいかい！' : 'もう一度ならべよう！'}
+            {checked === 'correct' ? 'せいかい！' : 'もう一度ならべよう！'}
           </p>
         )}
       </div>
