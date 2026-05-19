@@ -8,7 +8,6 @@ import './Stage2Listen.css'
 
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmK15QD8nc0XpAVAzR3d5-YXr6UfDnEG-hsg4KSoNNszvFHGzzZVglo1lKmzzIrlSlNQmDBjyMs55/pub?gid=360174079&single=true&output=csv'
 
-// 小学校で習う重要文（並び替え問題）
 const SAMPLE_SENTENCES = [
   { sentence: 'I like apples.',             ja: 'わたしはりんごが好きです。',          words: ['I','like','apples.'],                        dummies: ['eat','he'] },
   { sentence: 'I have a dog.',              ja: 'わたしはいぬを飼っています。',         words: ['I','have','a','dog.'],                       dummies: ['cat','she'] },
@@ -24,18 +23,18 @@ const SAMPLE_SENTENCES = [
   { sentence: 'My birthday is in April.',   ja: 'わたしの誕生日は4月です。',           words: ['My','birthday','is','in','April.'],         dummies: ['May','June'] },
   { sentence: 'I study math every day.',    ja: 'わたしは毎日算数を勉強します。',       words: ['I','study','math','every','day.'],          dummies: ['science','she'] },
   { sentence: 'Do you like sports?',        ja: 'あなたはスポーツが好きですか？',       words: ['Do','you','like','sports?'],                dummies: ['does','he'] },
-  { sentence: 'Yes I do.',                  ja: 'はい、好きです。',                   words: ['Yes','I','do.'],                           dummies: ['No','she'] },
+  { sentence: 'Yes I do.',                  ja: 'はい、好きです。',                    words: ['Yes','I','do.'],                           dummies: ['No','she'] },
   { sentence: 'No I do not.',               ja: 'いいえ、好きではありません。',         words: ['No','I','do','not.'],                       dummies: ['Yes','she'] },
   { sentence: 'What is your name?',         ja: 'あなたの名前は何ですか？',             words: ['What','is','your','name?'],                 dummies: ['Where','how'] },
   { sentence: 'My name is Taro.',           ja: 'わたしの名前は太郎です。',             words: ['My','name','is','Taro.'],                  dummies: ['Her','your'] },
   { sentence: 'Where do you live?',         ja: 'あなたはどこに住んでいますか？',       words: ['Where','do','you','live?'],                 dummies: ['What','he'] },
   { sentence: 'I live in Tokyo.',           ja: 'わたしは東京に住んでいます。',         words: ['I','live','in','Tokyo.'],                  dummies: ['go','she'] },
   { sentence: 'I wake up at seven.',        ja: 'わたしは7時に起きます。',             words: ['I','wake','up','at','seven.'],              dummies: ['sleep','six'] },
-  { sentence: 'I eat breakfast every morning.',ja: 'わたしは毎朝朝ごはんを食べます。', words: ['I','eat','breakfast','every','morning.'],  dummies: ['lunch','she'] },
+  { sentence: 'I eat breakfast every morning.', ja: 'わたしは毎朝朝ごはんを食べます。', words: ['I','eat','breakfast','every','morning.'],  dummies: ['lunch','she'] },
   { sentence: 'Turn right at the corner.',  ja: 'かどを右に曲がってください。',         words: ['Turn','right','at','the','corner.'],       dummies: ['left','go'] },
   { sentence: 'Go straight for two blocks.',ja: '2ブロックまっすぐ進んでください。',   words: ['Go','straight','for','two','blocks.'],     dummies: ['right','three'] },
   { sentence: 'How is the weather today?',  ja: '今日の天気はどうですか？',             words: ['How','is','the','weather','today?'],       dummies: ['What','tomorrow'] },
-  { sentence: 'It is sunny today.',         ja: '今日は晴れです。',                   words: ['It','is','sunny','today.'],                dummies: ['rainy','cloudy'] },
+  { sentence: 'It is sunny today.',         ja: '今日は晴れです。',                    words: ['It','is','sunny','today.'],                dummies: ['rainy','cloudy'] },
   { sentence: 'I want to be a doctor.',     ja: 'わたしはお医者さんになりたいです。',   words: ['I','want','to','be','a','doctor.'],         dummies: ['teacher','she'] },
   { sentence: 'She is a kind teacher.',     ja: '彼女はやさしい先生です。',             words: ['She','is','a','kind','teacher.'],           dummies: ['doctor','he'] },
   { sentence: 'We have math on Monday.',    ja: '月曜日に算数があります。',             words: ['We','have','math','on','Monday.'],          dummies: ['science','Friday'] },
@@ -55,12 +54,20 @@ function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5)
 }
 
+function getLevelPool<T>(pool: T[], level: number, maxLevels = 3): T[] {
+  const size = Math.ceil(pool.length / maxLevels)
+  const start = (level - 1) * size
+  return pool.slice(start, start + size)
+}
+
 interface Stage2ListenProps {
+  level: number
   onAddStar: () => void
+  onClearLevel: () => void
   onBack: () => void
 }
 
-export default function Stage2Listen({ onAddStar, onBack }: Stage2ListenProps) {
+export default function Stage2Listen({ level, onAddStar, onClearLevel, onBack }: Stage2ListenProps) {
   const { speak } = useSpeech()
   const { rows } = useSheetData(SHEET_CSV_URL)
 
@@ -74,21 +81,22 @@ export default function Stage2Listen({ onAddStar, onBack }: Stage2ListenProps) {
   const [finished, setFinished] = useState(false)
 
   useEffect(() => {
-    if (rows.length >= 10 && !initialized.current) {
+    if (initialized.current) return
+    if (rows.length >= 10) {
       const pool = rows.map((r) => {
         const words = (r[3] ?? '').split(' ').filter(Boolean)
         const dummies = (r[4] ?? '').split(' ').filter(Boolean)
         return { sentence: r[1] ?? '', ja: r[2] ?? '', words, dummies }
       })
-      setQuestions(shuffle(pool).slice(0, QUESTIONS_PER_ROUND))
+      setQuestions(shuffle(getLevelPool(pool, level)).slice(0, QUESTIONS_PER_ROUND))
       setIndex(0)
       initialized.current = true
-    } else if (!initialized.current) {
-      setQuestions(shuffle(SAMPLE_SENTENCES).slice(0, QUESTIONS_PER_ROUND))
+    } else {
+      setQuestions(shuffle(getLevelPool(SAMPLE_SENTENCES, level)).slice(0, QUESTIONS_PER_ROUND))
       setIndex(0)
       initialized.current = true
     }
-  }, [rows])
+  }, [rows, level])
 
   const current = questions[index]
 
@@ -109,7 +117,7 @@ export default function Stage2Listen({ onAddStar, onBack }: Stage2ListenProps) {
       const t = setTimeout(() => speak(current.sentence), 500)
       return () => clearTimeout(t)
     }
-  }, [current, speak])
+  }, [current]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const selectWord = (word: string, idx: number) => {
     if (checked !== 'idle') return
@@ -131,8 +139,12 @@ export default function Stage2Listen({ onAddStar, onBack }: Stage2ListenProps) {
       setStars((s) => s + 1)
       onAddStar()
       setTimeout(() => {
-        if (index + 1 >= questions.length) setFinished(true)
-        else setIndex((i) => i + 1)
+        if (index + 1 >= questions.length) {
+          onClearLevel()
+          setFinished(true)
+        } else {
+          setIndex((i) => i + 1)
+        }
       }, 1300)
     } else {
       setChecked('wrong')
@@ -147,10 +159,11 @@ export default function Stage2Listen({ onAddStar, onBack }: Stage2ListenProps) {
   if (!current && !finished) {
     return <div className="stage2 stage2--loading"><p>データを読み込み中…🐕</p></div>
   }
+
   if (finished) {
     return (
       <div className="stage2 stage2--finish">
-        <Character type="shiba" mood="happy" message={`ぜんぶクリア！\n⭐ ${stars}こ ゲット！`} size="lg" />
+        <Character type="shiba" mood="happy" message={`Lv.${level} クリア！\n⭐ ${stars}こ ゲット！`} size="lg" />
         <h2>よくできました！🎉</h2>
         <PuffyButton variant="primary" size="lg" onClick={onBack}>ホームへもどる</PuffyButton>
       </div>
@@ -164,6 +177,7 @@ export default function Stage2Listen({ onAddStar, onBack }: Stage2ListenProps) {
         <StarGauge stars={stars} maxStars={QUESTIONS_PER_ROUND} />
         <span className="stage2__progress">{index + 1} / {questions.length}</span>
       </div>
+      <div className="stage2__level-badge">🎧 Listen — Lv.{level}</div>
       <Character type="shiba" mood="cheer" size="sm" />
       <div className={['stage2__card', checked !== 'idle' ? `stage2__card--${checked}` : ''].join(' ')}>
         <p className="stage2__instruction">英語を聴いて、ことばを正しい順番にならべよう！</p>

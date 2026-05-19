@@ -4,36 +4,97 @@ import Stage1Word from './stages/Stage1Word'
 import Stage2Listen from './stages/Stage2Listen'
 import Stage3Talk from './stages/Stage3Talk'
 
-type Screen = 'home' | 'stage1' | 'stage2' | 'stage3'
+const STORAGE_KEY = 'mofumofu-v2'
 
-/**
- * App — 画面遷移の管理
- * React Router は不要。useState だけでシンプルに制御。
- */
+interface Progress {
+  totalStars: number
+  cleared: {
+    word: number[]
+    listen: number[]
+    talk: number[]
+  }
+}
+
+function loadProgress(): Progress {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY)
+    if (s) return JSON.parse(s)
+  } catch {}
+  return { totalStars: 0, cleared: { word: [], listen: [], talk: [] } }
+}
+
+function saveProgress(p: Progress) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)) } catch {}
+}
+
+type ActiveStage = { type: 1 | 2 | 3; level: number } | null
+
 export default function App() {
-  const [screen, setScreen] = useState<Screen>('home')
-  const [totalStars, setTotalStars] = useState(0)
+  const [progress, setProgress] = useState<Progress>(loadProgress)
+  const [stage, setStage] = useState<ActiveStage>(null)
 
-  const addStar = () => setTotalStars((s) => s + 1)
-  const goHome = () => setScreen('home')
+  const handleSelectStage = (type: 1 | 2 | 3, level: number) => {
+    setStage({ type, level })
+  }
 
+  const handleAddStar = () => {
+    setProgress(prev => {
+      const next = { ...prev, totalStars: prev.totalStars + 1 }
+      saveProgress(next)
+      return next
+    })
+  }
+
+  const handleClearLevel = (type: 1 | 2 | 3, level: number) => {
+    setProgress(prev => {
+      const key = type === 1 ? 'word' : type === 2 ? 'listen' : 'talk'
+      if (prev.cleared[key].includes(level)) return prev
+      const next = {
+        ...prev,
+        cleared: { ...prev.cleared, [key]: [...prev.cleared[key], level] }
+      }
+      saveProgress(next)
+      return next
+    })
+  }
+
+  const goHome = () => setStage(null)
+
+  if (stage === null) {
+    return (
+      <HomeScreen
+        totalStars={progress.totalStars}
+        cleared={progress.cleared}
+        onSelectStage={handleSelectStage}
+      />
+    )
+  }
+  if (stage.type === 1) {
+    return (
+      <Stage1Word
+        level={stage.level}
+        onAddStar={handleAddStar}
+        onClearLevel={() => handleClearLevel(1, stage.level)}
+        onBack={goHome}
+      />
+    )
+  }
+  if (stage.type === 2) {
+    return (
+      <Stage2Listen
+        level={stage.level}
+        onAddStar={handleAddStar}
+        onClearLevel={() => handleClearLevel(2, stage.level)}
+        onBack={goHome}
+      />
+    )
+  }
   return (
-    <>
-      {screen === 'home' && (
-        <HomeScreen
-          totalStars={totalStars}
-          onSelectStage={(stage) => setScreen(`stage${stage}` as Screen)}
-        />
-      )}
-      {screen === 'stage1' && (
-        <Stage1Word onAddStar={addStar} onBack={goHome} />
-      )}
-      {screen === 'stage2' && (
-        <Stage2Listen onAddStar={addStar} onBack={goHome} />
-      )}
-      {screen === 'stage3' && (
-        <Stage3Talk onAddStar={addStar} onBack={goHome} />
-      )}
-    </>
+    <Stage3Talk
+      level={stage.level}
+      onAddStar={handleAddStar}
+      onClearLevel={() => handleClearLevel(3, stage.level)}
+      onBack={goHome}
+    />
   )
 }

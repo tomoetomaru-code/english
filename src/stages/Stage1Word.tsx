@@ -8,9 +8,7 @@ import './Stage1Word.css'
 
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSBmK15QD8nc0XpAVAzR3d5-YXr6UfDnEG-hsg4KSoNNszvFHGzzZVglo1lKmzzIrlSlNQmDBjyMs55/pub?gid=0&single=true&output=csv'
 
-// 小学校1〜6年で習う英単語（カテゴリ別）
 const SAMPLE_WORDS = [
-  // 動物
   { word: 'cat',        ja: 'ねこ',         choices: ['cat', 'dog', 'bird'],          img: '' },
   { word: 'dog',        ja: 'いぬ',         choices: ['dog', 'fish', 'rabbit'],       img: '' },
   { word: 'bird',       ja: 'とり',         choices: ['bird', 'cat', 'horse'],        img: '' },
@@ -21,7 +19,6 @@ const SAMPLE_WORDS = [
   { word: 'monkey',     ja: 'さる',         choices: ['monkey', 'panda', 'koala'],    img: '' },
   { word: 'panda',      ja: 'パンダ',       choices: ['panda', 'monkey', 'bear'],     img: '' },
   { word: 'horse',      ja: 'うま',         choices: ['horse', 'cow', 'pig'],         img: '' },
-  // 食べもの・果物
   { word: 'apple',      ja: 'りんご',       choices: ['apple', 'orange', 'grape'],    img: '' },
   { word: 'banana',     ja: 'バナナ',       choices: ['banana', 'melon', 'lemon'],    img: '' },
   { word: 'orange',     ja: 'オレンジ',     choices: ['orange', 'apple', 'peach'],    img: '' },
@@ -32,7 +29,6 @@ const SAMPLE_WORDS = [
   { word: 'cake',       ja: 'ケーキ',       choices: ['cake', 'pie', 'bread'],        img: '' },
   { word: 'pizza',      ja: 'ピザ',         choices: ['pizza', 'pasta', 'soup'],      img: '' },
   { word: 'salad',      ja: 'サラダ',       choices: ['salad', 'pizza', 'rice'],      img: '' },
-  // 色
   { word: 'red',        ja: 'あか',         choices: ['red', 'blue', 'green'],        img: '' },
   { word: 'blue',       ja: 'あお',         choices: ['blue', 'red', 'yellow'],       img: '' },
   { word: 'green',      ja: 'みどり',       choices: ['green', 'pink', 'blue'],       img: '' },
@@ -41,70 +37,57 @@ const SAMPLE_WORDS = [
   { word: 'white',      ja: 'しろ',         choices: ['white', 'black', 'gray'],      img: '' },
   { word: 'black',      ja: 'くろ',         choices: ['black', 'white', 'brown'],     img: '' },
   { word: 'brown',      ja: 'ちゃいろ',     choices: ['brown', 'orange', 'black'],    img: '' },
-  // 数字
   { word: 'one',        ja: '1',            choices: ['one', 'two', 'three'],         img: '' },
   { word: 'two',        ja: '2',            choices: ['two', 'four', 'six'],          img: '' },
   { word: 'three',      ja: '3',            choices: ['three', 'five', 'seven'],      img: '' },
   { word: 'ten',        ja: '10',           choices: ['ten', 'eight', 'nine'],        img: '' },
   { word: 'twenty',     ja: '20',           choices: ['twenty', 'twelve', 'thirty'],  img: '' },
-  // 場所・施設
   { word: 'school',     ja: 'がっこう',     choices: ['school', 'park', 'hospital'],  img: '' },
   { word: 'park',       ja: 'こうえん',     choices: ['park', 'store', 'school'],     img: '' },
   { word: 'library',    ja: 'としょかん',   choices: ['library', 'museum', 'park'],   img: '' },
   { word: 'hospital',   ja: 'びょういん',   choices: ['hospital', 'school', 'store'], img: '' },
   { word: 'station',    ja: 'えき',         choices: ['station', 'airport', 'port'],  img: '' },
   { word: 'restaurant', ja: 'レストラン',   choices: ['restaurant', 'hotel', 'cafe'], img: '' },
-  // 日常生活
   { word: 'morning',    ja: 'あさ',         choices: ['morning', 'noon', 'night'],    img: '' },
   { word: 'night',      ja: 'よる',         choices: ['night', 'morning', 'evening'], img: '' },
   { word: 'today',      ja: 'きょう',       choices: ['today', 'tomorrow', 'yesterday'], img: '' },
   { word: 'tomorrow',   ja: 'あした',       choices: ['tomorrow', 'today', 'yesterday'], img: '' },
   { word: 'birthday',   ja: 'たんじょうび', choices: ['birthday', 'holiday', 'weekend'], img: '' },
-  // 曜日
   { word: 'Monday',     ja: 'げつようび',   choices: ['Monday', 'Tuesday', 'Sunday'],  img: '' },
   { word: 'Friday',     ja: 'きんようび',   choices: ['Friday', 'Saturday', 'Thursday'], img: '' },
   { word: 'Sunday',     ja: 'にちようび',   choices: ['Sunday', 'Monday', 'Saturday'], img: '' },
-  // 教科
   { word: 'math',       ja: 'さんすう',     choices: ['math', 'science', 'music'],    img: '' },
   { word: 'science',    ja: 'りか',         choices: ['science', 'math', 'art'],      img: '' },
   { word: 'music',      ja: 'おんがく',     choices: ['music', 'art', 'P.E.'],        img: '' },
   { word: 'art',        ja: 'ずこう',       choices: ['art', 'music', 'math'],        img: '' },
-  // スポーツ
   { word: 'soccer',     ja: 'サッカー',     choices: ['soccer', 'tennis', 'baseball'], img: '' },
   { word: 'baseball',   ja: 'やきゅう',     choices: ['baseball', 'soccer', 'swimming'], img: '' },
   { word: 'swimming',   ja: 'すいえい',     choices: ['swimming', 'running', 'soccer'], img: '' },
   { word: 'tennis',     ja: 'テニス',       choices: ['tennis', 'golf', 'soccer'],    img: '' },
-  // 乗り物
   { word: 'bus',        ja: 'バス',         choices: ['bus', 'train', 'car'],         img: '' },
   { word: 'train',      ja: 'でんしゃ',     choices: ['train', 'bus', 'subway'],      img: '' },
   { word: 'airplane',   ja: 'ひこうき',     choices: ['airplane', 'ship', 'rocket'],  img: '' },
-  // 季節
   { word: 'spring',     ja: 'はる',         choices: ['spring', 'summer', 'winter'],  img: '' },
   { word: 'summer',     ja: 'なつ',         choices: ['summer', 'fall', 'spring'],    img: '' },
   { word: 'winter',     ja: 'ふゆ',         choices: ['winter', 'spring', 'autumn'],  img: '' },
-  // 体
   { word: 'eye',        ja: 'め',           choices: ['eye', 'ear', 'nose'],          img: '' },
   { word: 'ear',        ja: 'みみ',         choices: ['ear', 'mouth', 'eye'],         img: '' },
   { word: 'hand',       ja: 'て',           choices: ['hand', 'foot', 'arm'],         img: '' },
-  // 職業
   { word: 'teacher',    ja: 'せんせい',     choices: ['teacher', 'doctor', 'chef'],   img: '' },
   { word: 'doctor',     ja: 'おいしゃさん', choices: ['doctor', 'nurse', 'teacher'],  img: '' },
   { word: 'chef',       ja: 'コック',       choices: ['chef', 'baker', 'doctor'],     img: '' },
   { word: 'farmer',     ja: 'のうか',       choices: ['farmer', 'fisher', 'chef'],    img: '' },
-  // 形容詞
   { word: 'big',        ja: 'おおきい',     choices: ['big', 'small', 'tall'],        img: '' },
   { word: 'small',      ja: 'ちいさい',     choices: ['small', 'big', 'short'],       img: '' },
   { word: 'hot',        ja: 'あつい',       choices: ['hot', 'cold', 'warm'],         img: '' },
   { word: 'cold',       ja: 'つめたい',     choices: ['cold', 'hot', 'cool'],         img: '' },
   { word: 'happy',      ja: 'うれしい',     choices: ['happy', 'sad', 'angry'],       img: '' },
-  { word: 'hungry',     ja: 'おなかがすいた', choices: ['hungry', 'tired', 'sleepy'],  img: '' },
-  // あいさつ・基本表現
+  { word: 'hungry',     ja: 'おなかがすいた', choices: ['hungry', 'tired', 'sleepy'], img: '' },
   { word: 'hello',      ja: 'こんにちは',   choices: ['hello', 'goodbye', 'thanks'],  img: '' },
   { word: 'goodbye',    ja: 'さようなら',   choices: ['goodbye', 'hello', 'sorry'],   img: '' },
-  { word: 'please',     ja: 'おねがいします', choices: ['please', 'sorry', 'thanks'],  img: '' },
+  { word: 'please',     ja: 'おねがいします', choices: ['please', 'sorry', 'thanks'], img: '' },
   { word: 'sorry',      ja: 'ごめんなさい', choices: ['sorry', 'please', 'hello'],    img: '' },
   { word: 'thanks',     ja: 'ありがとう',   choices: ['thanks', 'sorry', 'please'],   img: '' },
-  // 月
   { word: 'January',    ja: '1がつ',        choices: ['January', 'February', 'March'],  img: '' },
   { word: 'April',      ja: '4がつ',        choices: ['April', 'May', 'June'],          img: '' },
   { word: 'December',   ja: '12がつ',       choices: ['December', 'November', 'October'], img: '' },
@@ -121,16 +104,24 @@ function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5)
 }
 
+function getLevelPool<T>(pool: T[], level: number, maxLevels = 3): T[] {
+  const size = Math.ceil(pool.length / maxLevels)
+  const start = (level - 1) * size
+  return pool.slice(start, start + size)
+}
+
 const QUESTIONS_PER_ROUND = 5
 
 interface Stage1WordProps {
+  level: number
   onAddStar: () => void
+  onClearLevel: () => void
   onBack: () => void
 }
 
 type AnswerState = 'idle' | 'correct' | 'wrong'
 
-export default function Stage1Word({ onAddStar, onBack }: Stage1WordProps) {
+export default function Stage1Word({ level, onAddStar, onClearLevel, onBack }: Stage1WordProps) {
   const { speak } = useSpeech()
   const { rows } = useSheetData(SHEET_CSV_URL)
 
@@ -144,24 +135,23 @@ export default function Stage1Word({ onAddStar, onBack }: Stage1WordProps) {
   const [finished, setFinished] = useState(false)
 
   useEffect(() => {
-    // シートデータが十分あれば使う（一度だけ初期化）
-    if (rows.length >= 10 && !initialized.current) {
+    if (initialized.current) return
+    if (rows.length >= 10) {
       const pool = rows.map((r) => ({
         word:    r[1] ?? '',
         ja:      r[2] ?? '',
         choices: shuffle([r[1] ?? '', r[3] ?? '', r[4] ?? '']),
         img:     r[5] ?? '',
       }))
-      setQuestions(shuffle(pool).slice(0, QUESTIONS_PER_ROUND))
+      setQuestions(shuffle(getLevelPool(pool, level)).slice(0, QUESTIONS_PER_ROUND))
       setIndex(0)
       initialized.current = true
-    } else if (!initialized.current) {
-      // シートなし → サンプルで初期化（1回のみ）
-      setQuestions(shuffle(SAMPLE_WORDS).slice(0, QUESTIONS_PER_ROUND))
+    } else {
+      setQuestions(shuffle(getLevelPool(SAMPLE_WORDS, level)).slice(0, QUESTIONS_PER_ROUND))
       setIndex(0)
       initialized.current = true
     }
-  }, [rows])
+  }, [rows, level])
 
   useEffect(() => {
     if (questions[index]) {
@@ -180,7 +170,7 @@ export default function Stage1Word({ onAddStar, onBack }: Stage1WordProps) {
       const t = setTimeout(() => speak(current.word), 500)
       return () => clearTimeout(t)
     }
-  }, [current, speak])
+  }, [current]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleChoose = (choice: string) => {
     if (answerState !== 'idle' || !current) return
@@ -190,8 +180,14 @@ export default function Stage1Word({ onAddStar, onBack }: Stage1WordProps) {
       setStars((s) => s + 1)
       onAddStar()
       setTimeout(() => {
-        if (index + 1 >= questions.length) setFinished(true)
-        else { setIndex((i) => i + 1); setAnswerState('idle'); setCharMood('cheer') }
+        if (index + 1 >= questions.length) {
+          onClearLevel()
+          setFinished(true)
+        } else {
+          setIndex((i) => i + 1)
+          setAnswerState('idle')
+          setCharMood('cheer')
+        }
       }, 1200)
     } else {
       setAnswerState('wrong')
@@ -207,7 +203,7 @@ export default function Stage1Word({ onAddStar, onBack }: Stage1WordProps) {
   if (finished) {
     return (
       <div className="stage1 stage1--finish">
-        <Character type="rabi" mood="happy" message={`ぜんぶ クリア！\n⭐ ${stars}こ ゲット！`} size="lg" />
+        <Character type="rabi" mood="happy" message={`Lv.${level} クリア！\n⭐ ${stars}こ ゲット！`} size="lg" />
         <h2 className="stage1__finish-title">よくできました！🎉</h2>
         <PuffyButton variant="primary" size="lg" onClick={onBack}>ホームへもどる</PuffyButton>
       </div>
@@ -221,6 +217,7 @@ export default function Stage1Word({ onAddStar, onBack }: Stage1WordProps) {
         <StarGauge stars={stars} maxStars={QUESTIONS_PER_ROUND} />
         <span className="stage1__progress">{index + 1} / {questions.length}</span>
       </div>
+      <div className="stage1__level-badge">📖 Word — Lv.{level}</div>
       <Character type="rabi" mood={charMood} size="sm" />
       <div className={['stage1__card', answerState !== 'idle' ? `stage1__card--${answerState}` : ''].join(' ')}>
         <p className="stage1__instruction">音を聴いて、正しいえいごを えらぼう！</p>

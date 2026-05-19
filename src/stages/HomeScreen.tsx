@@ -1,20 +1,29 @@
 import Character from '../components/Character'
-import StageCard from '../components/StageCard'
-import StarGauge from '../components/StarGauge'
 import './HomeScreen.css'
+
+const MAX_LEVELS = 3
 
 interface HomeScreenProps {
   totalStars: number
-  onSelectStage: (stage: 1 | 2 | 3) => void
+  cleared: { word: number[]; listen: number[]; talk: number[] }
+  onSelectStage: (type: 1 | 2 | 3, level: number) => void
 }
 
-/**
- * ホーム画面 — タイトル・キャラクター・ステージ選択カード
- */
-export default function HomeScreen({ totalStars, onSelectStage }: HomeScreenProps) {
+const STAGE_CONFIG = [
+  { type: 1 as const, key: 'word'   as const, emoji: '📖', title: 'Word',   subtitle: 'えいたんごクイズ🎵', colorKey: 'stage1' },
+  { type: 2 as const, key: 'listen' as const, emoji: '🎧', title: 'Listen', subtitle: 'ならべかえ問題🧩',   colorKey: 'stage2' },
+  { type: 3 as const, key: 'talk'   as const, emoji: '💬', title: 'Talk',   subtitle: 'ロールプレイ🎤',     colorKey: 'stage3' },
+]
+
+export default function HomeScreen({ totalStars, cleared, onSelectStage }: HomeScreenProps) {
+  const isUnlocked = (key: 'word' | 'listen' | 'talk', level: number) =>
+    level === 1 || cleared[key].includes(level - 1)
+
+  const isCleared = (key: 'word' | 'listen' | 'talk', level: number) =>
+    cleared[key].includes(level)
+
   return (
     <div className="home">
-      {/* ヘッダー */}
       <header className="home__header">
         <h1 className="home__title">
           <span className="home__title-en">Mofumofu</span>
@@ -22,44 +31,56 @@ export default function HomeScreen({ totalStars, onSelectStage }: HomeScreenProp
         </h1>
         <div className="home__stars">
           <span className="home__stars-label">ごうけい ⭐</span>
-          <StarGauge stars={Math.min(totalStars, 5)} maxStars={5} />
+          <span className="home__stars-count">{totalStars}</span>
         </div>
       </header>
 
-      {/* キャラクター */}
       <section className="home__characters" aria-label="キャラクター">
         <Character type="rabi" mood="cheer" size="lg" />
       </section>
 
-      {/* ステージ選択 */}
       <section className="home__stages" aria-label="ステージを選ぼう">
         <h2 className="home__stages-title">ステージを えらぼう！</h2>
         <div className="home__stage-grid">
-          <StageCard
-            stageNumber={1}
-            title="Word"
-            subtitle="えいたんごクイズ🎵&#10;音を聴いて正しい答えを選ぼう"
-            emoji="📖"
-            onClick={() => onSelectStage(1)}
-          />
-          <StageCard
-            stageNumber={2}
-            title="Listen"
-            subtitle="ならべかえ問題🧩&#10;ことばをならべて文をつくろう"
-            emoji="🎧"
-            onClick={() => onSelectStage(2)}
-          />
-          <StageCard
-            stageNumber={3}
-            title="Talk"
-            subtitle="ロールプレイ🎤&#10;マイクに向かって話しかけよう"
-            emoji="💬"
-            onClick={() => onSelectStage(3)}
-          />
+          {STAGE_CONFIG.map(({ type, key, emoji, title, subtitle, colorKey }) => (
+            <div key={type} className={`home__stage-card home__stage-card--${colorKey}`}>
+              <div className="home__stage-header">
+                <span className="home__stage-emoji">{emoji}</span>
+                <div>
+                  <p className="home__stage-title">{title}</p>
+                  <p className="home__stage-subtitle">{subtitle}</p>
+                </div>
+              </div>
+              <div className="home__level-row">
+                {Array.from({ length: MAX_LEVELS }, (_, i) => {
+                  const lv = i + 1
+                  const unlocked = isUnlocked(key, lv)
+                  const done = isCleared(key, lv)
+                  return (
+                    <button
+                      key={lv}
+                      className={[
+                        'home__level-btn',
+                        done ? 'home__level-btn--done' : '',
+                        !unlocked ? 'home__level-btn--locked' : '',
+                      ].join(' ')}
+                      onClick={() => unlocked && onSelectStage(type, lv)}
+                      disabled={!unlocked}
+                      aria-label={`${title} レベル${lv}`}
+                    >
+                      <span className="home__level-icon">
+                        {done ? '⭐' : !unlocked ? '🔒' : '▶'}
+                      </span>
+                      <span className="home__level-label">Lv.{lv}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* フッター */}
       <footer className="home__footer">
         <p>© 2024 もふもふ英語フレンズ</p>
       </footer>
