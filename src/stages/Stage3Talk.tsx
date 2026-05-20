@@ -139,6 +139,10 @@ export default function Stage3Talk({ level, onAddStar, onClearLevel, onBack }: S
     if (current) speak(current.answer)
   }, [current, speak])
 
+  const speakAnswerSlow = useCallback(() => {
+    if (current) speak(current.answer, 'en-US', 0.5)
+  }, [current, speak])
+
   const startTyping = useCallback((text: string) => {
     setTypingText('')
     let i = 0
@@ -267,9 +271,10 @@ export default function Stage3Talk({ level, onAddStar, onClearLevel, onBack }: S
 
       <div className="stage3__hint">
         <p className="stage3__hint-text">{current.hint}</p>
-        <PuffyButton variant="honey" size="sm" onClick={speakAnswer}>
-          答えを音声で聞く
-        </PuffyButton>
+        <div className="stage3__speak-row">
+          <PuffyButton variant="honey" size="sm" onClick={speakAnswer}>答えを音声で聞く</PuffyButton>
+          <PuffyButton variant="honey" size="sm" onClick={speakAnswerSlow}>ゆっくり</PuffyButton>
+        </div>
       </div>
 
       {typingText && (
