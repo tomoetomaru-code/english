@@ -182,3 +182,113 @@
   font-size: 0.9rem;
   text-align: center;
 }
+
+/* ---- Confirm area ---- */
+.stage3__confirm-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 20px 24px;
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+  animation: fade-in-up 0.25s ease both;
+}
+
+.stage3__confirm-label {
+  font-family: var(--font-ja);
+  font-size: 0.82rem;
+  color: var(--color-text-light);
+  margin: 0;
+}
+
+.stage3__confirm-text {
+  font-family: var(--font-en);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0;
+  word-break: break-word;
+}
+
+.stage3__confirm-btns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ---- Speak row (ゆっくりボタン) ---- */
+.stage3__speak-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+/* ===== Mobile (≤ 480px) ===== */
+@media (max-width: 480px) {
+  .stage3 {
+    padding: 14px 10px 36px;
+    gap: 12px;
+  }
+
+  /* キャラ + 吹き出しを縦積みに */
+  .stage3__char-area {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stage3__dialog-box {
+    width: 100%;
+    padding: 12px 14px;
+    gap: 6px;
+  }
+
+  .stage3__dialog-en {
+    font-size: 0.95rem;
+  }
+
+  .stage3__dialog-ja {
+    font-size: 0.78rem;
+  }
+
+  .stage3__hint {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .stage3__hint-text {
+    font-size: 0.8rem;
+  }
+
+  .stage3__mic-btn {
+    padding: 20px 32px;
+    border-radius: var(--radius-md);
+  }
+
+  .stage3__mic-icon {
+    font-size: 2rem;
+  }
+
+  .stage3__confirm-area {
+    padding: 16px 16px;
+    gap: 10px;
+  }
+
+  .stage3__confirm-text {
+    font-size: 1rem;
+  }
+
+  .stage3__confirm-btns {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+}

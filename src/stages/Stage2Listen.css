@@ -142,4 +142,46 @@
 .stage2__level-badge {
   font-family: var(--font-ja);
   font-size: 0.85rem;
-  font-wei
+  font-weight: 700;
+  background: var(--color-stage2);
+  color: var(--color-white);
+  padding: 6px 18px;
+  border-radius: var(--radius-full);
+}
+
+/* ===== Mobile (≤ 480px) ===== */
+@media (max-width: 480px) {
+  .stage2 {
+    padding: 14px 10px 36px;
+    gap: 16px;
+  }
+
+  .stage2__card {
+    padding: 18px 12px;
+    gap: 10px;
+  }
+
+  .stage2__ja {
+    font-size: 1.05rem;
+  }
+
+  .stage2__instruction {
+    font-size: 0.8rem;
+  }
+
+  /* 単語チップを少し小さく */
+  .stage2__word-chip {
+    font-size: 0.9rem;
+    padding: 8px 14px;
+  }
+
+  .stage2__answer-area {
+    min-height: 50px;
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .stage2__bank {
+    gap: 8px;
+  }
+}

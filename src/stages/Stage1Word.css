@@ -115,3 +115,33 @@
   padding: 6px 18px;
   border-radius: var(--radius-full);
 }
+
+/* ===== Mobile (≤ 480px) ===== */
+@media (max-width: 480px) {
+  .stage1 {
+    padding: 14px 10px 36px;
+    gap: 16px;
+  }
+
+  .stage1__card {
+    padding: 20px 14px;
+    gap: 12px;
+  }
+
+  .stage1__word-img {
+    width: 110px;
+    height: 110px;
+  }
+
+  .stage1__ja-hint {
+    font-size: 1.35rem;
+  }
+
+  .stage1__choices {
+    max-width: 100%;
+  }
+
+  .stage1__instruction {
+    font-size: 0.82rem;
+  }
+}
